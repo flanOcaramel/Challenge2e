@@ -88,7 +88,7 @@ class UserController
     }
 
     // Affichage du formulaire de création d'avatar (anciennement index)
-    public function createAvatarForm()
+    public function createAvatarForm($error = null)
     {
         // Récupération des données nécessaires pour la vue
         $avatars = $this->avatarModel->findAll();
@@ -155,13 +155,20 @@ class UserController
 
                 // Validation du mot de passe (8 chars, 1 maj, 1 chiffre, 1 spécial)
                 if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
-                    $error = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.";
-                    $this->createAvatarForm(); // Recharge avec erreur
+                    $error = "The password must contain at least 8 characters, one uppercase letter, one number, and one special character.";
+                    $this->createAvatarForm($error); // Recharge avec erreur
                     return; // Arrêt du script
                 }
 
                 // Hachage du mot de passe pour la sécurité (conformément aux contraintes)
                 $hashed_password = password_hash($password, PASSWORD_ARGON2ID);
+
+                // Vérification si le pseudo existe déjà
+                if ($this->userModel->findByUsername($username)) {
+                    $error = "This username is already taken. Please choose another one.";
+                    $this->createAvatarForm($error);
+                    return;
+                }
 
                 // Tentative de création
                 if ($this->userModel->create($username, $hashed_password, $idAvatar, $idWorld)) {
@@ -169,13 +176,13 @@ class UserController
                     header("Location: index.php?page=success");
                     exit();
                 } else {
-                    $error = "Erreur lors de l'enregistrement. Ce nom d'utilisateur est peut-être déjà pris.";
+                    $error = "Error, maybe you should try again.";
                     // On recharge le formulaire avec l'erreur
-                    $this->createAvatarForm();
+                    $this->createAvatarForm($error);
                 }
             } else {
-                $error = "Veuillez remplir tous les champs.";
-                $this->createAvatarForm(); // Recharge le formulaire si incomplet
+                $error = "All fields are required.";
+                $this->createAvatarForm($error); // Recharge le formulaire si incomplet
             }
         }
     }

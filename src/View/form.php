@@ -26,6 +26,13 @@
 
     <main class="max-w-6xl mx-auto px-6 py-12">
 
+        <?php if (!empty($error)): ?>
+            <div
+                class="bg-red-500/20 border border-red-500 text-red-200 px-6 py-4 rounded-xl mb-8 text-center backdrop-blur-md">
+                <?= htmlspecialchars($error) ?>
+            </div>
+        <?php endif; ?>
+
 
         <form action="index.php?page=create_process" method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
@@ -114,7 +121,7 @@
                     Choose your world
                 </h2>
 
-                <input type="hidden" name="idWorld" id="idWorldInput" required>
+                <input type="hidden" name="idWorld" id="idWorldInput">
 
                 <!-- Carousel Container -->
                 <div class="infinite-carousel">
@@ -224,6 +231,19 @@
                 });
             });
         });
+
+        // Initialize First World Selection
+        if (allCards.length > 0) {
+            const firstCard = allCards[0];
+            const firstId = firstCard.getAttribute('data-id');
+            worldInput.value = firstId;
+            // Visual update
+            allCards.forEach(c => {
+                if (c.getAttribute('data-id') === firstId) {
+                    c.querySelector('.selection-ring').classList.add('active');
+                }
+            });
+        }
 
         /* ===== DRAG TO SLIDE (SCRUBBING) ===== */
         const carouselContainer = document.querySelector('.infinite-carousel');
