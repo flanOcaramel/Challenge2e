@@ -216,7 +216,7 @@
         }
     </style>
 </head>
-<body style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh;">
+    <body style="background: radial-gradient(circle at center, #1e293b 0%, #020617 100%); min-height: 100vh;">
     <nav class="admin-navbar">
         <div class="admin-nav-container">
             <div class="admin-nav-brand">Admin Chopin VR</div>
