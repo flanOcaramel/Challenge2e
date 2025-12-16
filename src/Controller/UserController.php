@@ -1,0 +1,162 @@
+<?php
+// Contrôleur gérant la logique des utilisateurs
+
+require_once '../config/db.php';
+require_once '../src/Model/UserModel.php';
+require_once '../src/Model/AvatarModel.php';
+require_once '../src/Model/WorldModel.php';
+
+class UserController
+{
+    private $db;
+    private $userModel;
+    private $avatarModel;
+    private $worldModel;
+
+    public function __construct()
+    {
+        // Initialisation de la connexion BDD et des modèles
+        $database = new Database();
+        $this->db = $database->getConnection();
+
+        $this->userModel = new UserModel($this->db);
+        $this->avatarModel = new AvatarModel($this->db);
+        $this->worldModel = new WorldModel($this->db);
+    }
+
+    // Affichage de la Landing Page (Accueil)
+    public function home()
+    {
+        require_once '../src/View/home.php';
+    }
+
+    // Affichage de la page de Connexion Admin
+    public function adminLogin()
+    {
+        require_once '../src/View/admin_login.php';
+    }
+
+    // Traitement de la connexion Admin
+    public function processAdminLogin()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
+
+            // Recherche de l'utilisateur
+            $user = $this->userModel->findByUsername($username);
+
+            // Vérification simple (Hash) ET Rôle Admin
+            if ($user && password_verify($password, $user['password']) && $user['userRole'] === 'ADMIN') {
+                // Succès : Redirection vers le dashboard
+                // Dans un vrai projet, on stockerait ici $_SESSION['admin'] = true;
+                header('Location: index.php?page=admin_dashboard');
+                exit();
+            } else {
+                // Erreur
+                $error = "Compte introuvable ou mot de passe incorrect.";
+                require_once '../src/View/admin_login.php';
+            }
+        }
+    }
+
+    // Page Dashboard (Vide/Bienvenue)
+    public function adminDashboard()
+    {
+        require_once '../src/View/admin_dashboard.php';
+    }
+
+    // Affichage du formulaire de création d'avatar (anciennement index)
+    public function createAvatarForm()
+    {
+        // Récupération des données nécessaires pour la vue
+        $avatars = $this->avatarModel->findAll();
+        $worlds = $this->worldModel->findAll();
+
+        // CORRECTION DÉFINITIVE : Mapping en dur pour contourner les erreurs en base de données
+        // La BDD contient des noms de fichiers incorrects (ex: prairie.jpg) alors que les fichiers sont world1.png
+
+        // 1. Mapping des Avatars
+        $avatarMap = [
+            1 => 'aventurier.jpg',
+            2 => 'astronaute.jpg',
+            3 => 'fitness_man.jpg',
+            4 => 'requin_mako.jpg',
+            5 => 'chien_pug.jpg'
+        ];
+
+        foreach ($avatars as &$avatar) {
+            $id = $avatar['idAvatar'];
+            // Si l'ID est connu dans notre map, on force le bon nom de fichier
+            if (isset($avatarMap[$id])) {
+                $filename = $avatarMap[$id];
+            } else {
+                // Sinon on essaie de nettoyer ce qui vient de la BDD
+                $pathStr = str_replace('\\', '/', $avatar['imgAvatar'] ?? '');
+                $filename = basename($pathStr);
+                if (empty($filename))
+                    $filename = 'aventurier.jpg'; // Fallback
+            }
+            $avatar['imgAvatar'] = 'assets/img/' . $filename;
+        }
+        unset($avatar);
+
+        // 2. Mapping des Mondes (Pattern worldX.png)
+        foreach ($worlds as &$world) {
+            // On ignore complètement le nom en BDD qui est erroné (prairie.jpg etc)
+            // On construit le nom basé sur l'ID qui correspond aux fichiers réels (world1.png...)
+            $filename = 'world' . $world['idWorld'] . '.png';
+            $world['imgWorld'] = 'assets/img/' . $filename;
+        }
+        unset($world);
+
+        // Inclusion de la vue
+        require_once '../src/View/form.php';
+    }
+
+    // Traitement du formulaire de création
+    public function create()
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Récupération des champs
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
+            $idAvatar = $_POST['idAvatar'] ?? null;
+            $idWorld = $_POST['idWorld'] ?? null;
+
+            // Validation basique
+            if (!empty($username) && !empty($password) && !empty($idAvatar) && !empty($idWorld)) {
+
+                // Validation du mot de passe (8 chars, 1 maj, 1 chiffre, 1 spécial)
+                if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
+                    $error = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.";
+                    $this->createAvatarForm(); // Recharge avec erreur
+                    return; // Arrêt du script
+                }
+
+                // Hachage du mot de passe pour la sécurité (conformément aux contraintes)
+                $hashed_password = password_hash($password, PASSWORD_ARGON2ID);
+
+                // Tentative de création
+                if ($this->userModel->create($username, $hashed_password, $idAvatar, $idWorld)) {
+                    // Redirection vers la page de succès
+                    header("Location: index.php?page=success");
+                    exit();
+                } else {
+                    $error = "Erreur lors de l'enregistrement. Ce nom d'utilisateur est peut-être déjà pris.";
+                    // On recharge le formulaire avec l'erreur
+                    $this->createAvatarForm();
+                }
+            } else {
+                $error = "Veuillez remplir tous les champs.";
+                $this->createAvatarForm(); // Recharge le formulaire si incomplet
+            }
+        }
+    }
+
+    // Page de succès
+    public function success()
+    {
+        require_once '../src/View/success.php';
+    }
+}
