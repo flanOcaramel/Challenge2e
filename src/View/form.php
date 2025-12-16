@@ -23,8 +23,10 @@
 <main class="max-w-6xl mx-auto px-6 py-12">
 
 
-<form action="index.php?page=create_process" method="POST"
-      class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+ <form action="index.php?page=create_process" method="POST"
+       class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
 
     <!-- ================= GAUCHE ================= -->
