@@ -827,6 +827,20 @@ body {
 
 
 
+
+.form-group input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(165, 180, 252, 0.2);
+  padding: 0.75em 0;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
 /* --- RADIO GLITCH BUTTONS (Footer only) --- */
 .container-footer {
   display: flex;
@@ -834,15 +848,19 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px; /* Moved to Right */
-  gap: 4px; /* Rapproché (reduced gap) */
   z-index: 50;
 }
 
-/* ... (lines omitted) ... */
+.footer-radio-wrapper {
+  position: relative;
+  height: 38px;
+  width: 160px; /* Increased to 140px */
+  margin: 3px;
+}
 
-/* Reduced size */
+/* Reduced size (Reset to normal) */
 .footer-radio-wrapper.small {
-  transform: scale(0.95); /* Augmenté un peu (0.8 -> 0.95) */
+  transform: scale(1); /* Reset to 1 (No scaling) */
 }
 
 .footer-radio-wrapper .input {
