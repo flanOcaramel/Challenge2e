@@ -130,9 +130,9 @@
     /* ===== AVATARS ===== */
     const avatars = [
     { id: 1, name: "Adventurer", img: "assets/img/aventurier.jpg" },
-    { id: 2, name: "Warrior",    img: "assets/img/chien_pug.jpg" },
-    { id: 3, name: "Mage",       img: "assets/img/requin_mako.jpg" },
-    { id: 4, name: "Rogue",      img: "assets/img/fitness_man.jpg" },
+    { id: 2, name: "chien_mako",    img: "assets/img/chien_pug.jpg" },
+    { id: 3, name: "requin_mako",       img: "assets/img/requin_mako.jpg" },
+    { id: 4, name: "fitness_man",      img: "assets/img/fitness_man.jpg" },
     { id: 5, name: "astraunote",      img: "assets/img/astronaute.jpg" }
 ];
 
@@ -161,22 +161,43 @@
     renderAvatar();
 
     /* ===== MONDES ===== */
+    /* ===== MONDES ===== */
     const carousel = document.getElementById("worldCarousel");
+    const worldItems = document.querySelectorAll(".world-item");
     const worldInput = document.getElementById("idWorldInput");
+    let currentWorld = 0;
 
-    document.getElementById("worldPrev").onclick = () =>
-        carousel.scrollBy({ left: -300, behavior: "smooth" });
+    function renderWorld() {
+        // Scroll vers l'élément courant
+        worldItems[currentWorld].scrollIntoView({ behavior: 'smooth', inline: 'center' });
 
-    document.getElementById("worldNext").onclick = () =>
-        carousel.scrollBy({ left: 300, behavior: "smooth" });
+        // Mise en surbrillance
+        worldItems.forEach((el, idx) => {
+            el.classList.toggle("ring-2", idx === currentWorld);
+            el.classList.toggle("ring-indigo-500", idx === currentWorld);
+            el.classList.toggle("scale-110", idx === currentWorld);
+        });
 
-    document.querySelectorAll(".world-item").forEach(item => {
+        worldInput.value = worldItems[currentWorld].dataset.id;
+    }
+
+    document.getElementById("worldPrev").onclick = () => {
+        currentWorld = (currentWorld - 1 + worldItems.length) % worldItems.length;
+        renderWorld();
+    };
+
+    document.getElementById("worldNext").onclick = () => {
+        currentWorld = (currentWorld + 1) % worldItems.length;
+        renderWorld();
+    };
+
+  
+    renderWorld();
+
+    worldItems.forEach((item, idx) => {
         item.onclick = () => {
-            document.querySelectorAll(".world-item").forEach(el =>
-                el.classList.remove("ring-2","ring-indigo-500","scale-110")
-            );
-            item.classList.add("ring-2","ring-indigo-500","scale-110");
-            worldInput.value = item.dataset.id;
+            currentWorld = idx;
+            renderWorld();
         };
     });
 </script>
