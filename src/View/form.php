@@ -13,10 +13,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Custom CSS (includes animation) -->
     <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Model Viewer -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
+        }
+        /* Fix focus outline glitch on click */
+        model-viewer:focus, model-viewer:focus-visible {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
@@ -97,9 +106,39 @@
                         <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)] pointer-events-none z-10">
                         </div>
 
-                        <!-- object-contain to prevent cropping -->
-                        <img id="avatarPreview" src="" alt="Avatar"
-                            class="w-full h-full object-contain transition transform group-hover:scale-105 duration-500">
+                        <!-- 3D Model Viewer -->
+                        <model-viewer id="avatarPreview"
+                            src=""
+                            alt="Avatar 3D Model"
+                            shadow-intensity="1"
+                            camera-controls
+                            auto-rotate
+                            autoplay
+                            bounds="tight"
+                            min-camera-orbit="auto auto 5%"
+                            interpolation-decay="200"
+                            class="w-full h-full"
+                            style="background-color: transparent;">
+                        </model-viewer>
+                        
+                        <!-- Toggle Animation Button (Mini button overlaid) -->
+                         <button type="button" id="animToggleBtn"
+                            class="absolute bottom-4 right-4 z-20 w-10 h-10 bg-slate-800 hover:bg-slate-700 text-white rounded-full flex items-center justify-center shadow-md transition transform hover:scale-110 border border-white/20"
+                            title="Changer l'animation">
+                            <!-- Icon: Running/Motion -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M19 17a2 2 0 0 0 2 2h2" />
+                                <path d="M22 22a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2" />
+                                <path d="M8 21h4" />
+                                <path d="M15 7h4" />
+                                <path d="M18 10v4" />
+                                <path d="M8 8v4" />
+                                <path d="M4 12v3" />
+                                <path d="M4 15l10-10" />
+                                <circle cx="4" cy="4" r="2" />
+                                <path d="M14 14l-4 4" />
+                            </svg>
+                        </button>
                     </div>
 
                     <button type="button" id="nextBtn"
@@ -185,7 +224,8 @@
             return [
                 'id' => $a['idAvatar'],
                 'name' => $a['nameAvatar'],
-                'img' => $a['imgAvatar']
+                'img' => $a['imgAvatar'],
+                'model' => $a['modelAvatar']
             ];
         }, $avatars);
         echo json_encode($avatarsJS);
@@ -200,15 +240,44 @@
             if (foundIndex !== -1) currentAvatar = foundIndex;
         }
 
-        const avatarImg = document.getElementById("avatarPreview");
+        const avatarModel = document.getElementById("avatarPreview");
         const avatarName = document.getElementById("avatarName");
         const avatarInput = document.getElementById("idAvatarInput");
+        const animBtn = document.getElementById("animToggleBtn");
 
         function renderAvatar() {
-            avatarImg.src = avatars[currentAvatar].img;
+            // Update Model Source
+            // Assuming models are in 'assets/3d/' based on user findings
+            avatarModel.src = "assets/3d/" + avatars[currentAvatar].model; 
+            
+            // If the model has an image fallback (Poster), we can set it here if needed
+            // avatarModel.poster = avatars[currentAvatar].img;
+
             avatarName.textContent = avatars[currentAvatar].name;
             avatarInput.value = avatars[currentAvatar].id;
         }
+
+        /* ===== ANIMATION TOGGLE ===== */
+        animBtn.onclick = () => {
+             const availableAnims = avatarModel.availableAnimations;
+             if (availableAnims && availableAnims.length > 0) {
+                 // Get current animation name or default to none
+                 const currentAnim = avatarModel.animationName;
+                 
+                 let nextIndex = 0;
+                 if (currentAnim) {
+                     const currentIndex = availableAnims.indexOf(currentAnim);
+                     if (currentIndex !== -1) {
+                         nextIndex = (currentIndex + 1) % availableAnims.length;
+                     }
+                 }
+                 
+                 avatarModel.animationName = availableAnims[nextIndex];
+                 console.log("Switched animation to:", availableAnims[nextIndex]);
+             } else {
+                 console.log("No animations available for this model.");
+             }
+        };
 
         document.getElementById("prevBtn").onclick = () => {
             currentAvatar = (currentAvatar - 1 + avatars.length) % avatars.length;
