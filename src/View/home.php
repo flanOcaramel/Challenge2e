@@ -63,38 +63,75 @@
 
     <!-- Modal Comment jouer -->
     <div id="how-to-play-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center fade-in">
         <div
-            style="background: rgba(255,255,255,0.95); padding: 40px; border-radius: 12px; text-align: center; max-width: 600px; width: 90%; backdrop-filter: blur(10px);">
-            <h2 style="color: #333; margin-bottom: 20px;">Comment jouer ?</h2>
-            <p style="color: #666; margin-bottom: 10px;">Bienvenue dans Chopin VR ! Voici les étapes pour commencer :
+            class="bg-slate-900/90 border border-indigo-500/30 p-8 rounded-2xl max-w-xl w-[90%] shadow-2xl relative text-center">
+
+            <h2 class="text-2xl font-bold text-indigo-400 mb-6 uppercase tracking-widest"
+                style="text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);">
+                Comment jouer ?
+            </h2>
+
+            <p class="text-gray-300 mb-6 text-sm leading-relaxed">
+                Bienvenue dans Chopin VR ! Préparez-vous à l'immersion :
             </p>
-            <ol style="text-align: left; color: #333; margin-bottom: 20px;">
-                <li>Créez votre avatar en choisissant un personnage et un monde.</li>
-                <li>Entrez un nom d'utilisateur et un mot de passe sécurisé.</li>
-                <li>Rendez-vous sur l'application () sur votre casque vr ou smartphone.</li>
-                <li>Profitez de l'expérience immersive !</li>
-            </ol>
+
+            <ul class="text-left text-gray-400 space-y-4 text-sm mb-8 px-4">
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-500 font-bold">01.</span>
+                    <span>Créez votre avatar en choisissant un personnage unique et votre monde de départ.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-500 font-bold">02.</span>
+                    <span>Sécurisez votre compte avec un identifiant et un mot de passe fort.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-500 font-bold">03.</span>
+                    <span>Connectez-vous sur l'application VR via votre casque ou smartphone.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span class="text-indigo-500 font-bold">04.</span>
+                    <span>Vivez l'expérience !</span>
+                </li>
+            </ul>
+
             <button id="close-how-to-play-modal"
-                style="margin-top: 20px; padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer;">Fermer</button>
+                class="px-8 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all shadow-lg hover:shadow-indigo-500/50 uppercase tracking-wider text-sm font-semibold">
+                Fermer
+            </button>
         </div>
     </div>
 
     <!-- Modal Crédits -->
     <div id="credits-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 items-center justify-center fade-in">
         <div
-            style="background: rgba(255,255,255,0.95); padding: 40px; border-radius: 12px; text-align: center; max-width: 400px; width: 90%; backdrop-filter: blur(10px);">
-            <h2 style="color: #333; margin-bottom: 20px;">Crédits</h2>
-            <p style="color: #666; margin-bottom: 20px;">Equipe porte-manteaux</p>
-            <p style="color: #666; margin-bottom: 10px;">Développeurs:</p>
-            <ul style="list-style: none; padding: 0; color: #333;">
-                <li>Quentin</li>
-                <li>Kamdine</li>
-                <li>Sael</li>
-            </ul>
+            class="bg-slate-900/90 border border-indigo-500/30 p-8 rounded-2xl max-w-sm w-[90%] shadow-2xl relative text-center">
+
+            <h2 class="text-2xl font-bold text-indigo-400 mb-8 uppercase tracking-widest"
+                style="text-shadow: 0 0 10px rgba(99, 102, 241, 0.5);">
+                Crédits
+            </h2>
+
+            <div class="space-y-6">
+                <div>
+                    <h3 class="text-white font-semibold mb-2 uppercase text-xs tracking-wider opacity-60">Équipe</h3>
+                    <p class="text-indigo-300 font-medium">Porte-manteaux</p>
+                </div>
+
+                <div>
+                    <h3 class="text-white font-semibold mb-3 uppercase text-xs tracking-wider opacity-60">Développeurs
+                    </h3>
+                    <p class="text-gray-300 font-light">
+                        Quentin - Kamdine - Sael
+                    </p>
+                </div>
+            </div>
+
             <button id="close-modal"
-                style="margin-top: 20px; padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer;">Fermer</button>
+                class="mt-8 px-8 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-all shadow-lg hover:shadow-indigo-500/50 uppercase tracking-wider text-sm font-semibold">
+                Fermer
+            </button>
         </div>
     </div>
 
