@@ -151,13 +151,19 @@ class UserController
             $idWorld = $_POST['idWorld'] ?? null;
 
             // Validation basique
-            if (!empty($username) && !empty($password) && !empty($idAvatar) && !empty($idWorld)) {
+            if (empty($username) || empty($password) || empty($idAvatar) || empty($idWorld)) {
+                $_SESSION['error'] = "Veuillez remplir tous les champs.";
+                header("Location: index.php?page=create_avatar");
+                exit();
+            }
 
                 // Validation du mot de passe (8 chars, 1 maj, 1 chiffre, 1 spécial)
                 if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
+
                     $error = "The password must contain at least 8 characters, one uppercase letter, one number, and one special character.";
                     $this->createAvatarForm($error, $_POST); // Recharge avec erreur et données
                     return; // Arrêt du script
+
                 }
 
                 // Hachage du mot de passe pour la sécurité (conformément aux contraintes)
@@ -176,6 +182,7 @@ class UserController
                     header("Location: index.php?page=success");
                     exit();
                 } else {
+
                     $error = "Error, maybe you should try again.";
                     // On recharge le formulaire avec l'erreur
                     $this->createAvatarForm($error, $_POST);
@@ -184,6 +191,7 @@ class UserController
                 $error = "All fields are required.";
                 $this->createAvatarForm($error, $_POST); // Recharge le formulaire si incomplet
             }
+
         }
     }
 
