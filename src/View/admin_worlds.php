@@ -41,7 +41,7 @@
                                     <?php if (!empty($world['imgWorld'])): ?>
                                         <img src="<?php echo htmlspecialchars($world['imgWorld']); ?>" 
                                              alt="<?php echo htmlspecialchars($world['nameWorld']); ?>" 
-                                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                             class="img-thumbnail">
                                     <?php else: ?>
                                         <span style="color: #999;">Aucune image</span>
                                     <?php endif; ?>

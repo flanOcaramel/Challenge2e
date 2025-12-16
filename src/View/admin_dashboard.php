@@ -5,9 +5,16 @@
         <div class="admin-header">
             <h1 class="admin-title">Bienvenue Admin</h1>
         </div>
-        <p>Vous êtes connecté au tableau de bord.</p>
-        <p>Nombre d'utilisateurs: <?php echo $userCount ?? 0; ?></p>
-        <a href="index.php?page=logout" class="btn-danger">Déconnexion</a>
+        <div class="dashboard-content">
+            <p class="welcome-msg">Vous êtes connecté au tableau de bord.</p>
+            
+            <div class="info-card">
+                <span class="label">Utilisateurs inscrits</span>
+                <span class="value"><?php echo $userCount ?? 0; ?></span>
+            </div>
+            
+
+        </div>
     </div>
 </div>
 
