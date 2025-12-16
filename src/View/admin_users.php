@@ -23,29 +23,29 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nom d'utilisateur</th>
-                        <th>Rôle</th>
-                        <th>Avatar</th>
-                        <th>Monde</th>
-                        <th>Actions</th>
+                         <th>ID</th>
+                         <th>Nom d'utilisateur</th>
+                         <th>Rôle</th>
+                         <th>ID Avatar</th>
+                         <th>ID Monde</th>
+                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!empty($users)): ?>
                         <?php foreach ($users as $user): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($user['idUser']); ?></td>
-                                <td><?php echo htmlspecialchars($user['username']); ?></td>
-                                <td>
-                                    <span style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem; 
-                                                background: <?php echo $user['userRole'] === 'ADMIN' ? '#10b981' : '#6366f1'; ?>; 
-                                                color: white;">
-                                        <?php echo htmlspecialchars($user['userRole']); ?>
-                                    </span>
-                                </td>
-                                <td><?php echo htmlspecialchars($user['avatarName'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($user['worldName'] ?? 'N/A'); ?></td>
+                                 <td><?php echo htmlspecialchars($user['idUser']); ?></td>
+                                 <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                 <td>
+                                     <span style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.875rem;
+                                                 background: <?php echo $user['userRole'] === 'ADMIN' ? '#10b981' : '#6366f1'; ?>;
+                                                 color: white;">
+                                         <?php echo htmlspecialchars($user['userRole']); ?>
+                                     </span>
+                                 </td>
+                                 <td><?php echo htmlspecialchars($user['idAvatar']); ?></td>
+                                 <td><?php echo htmlspecialchars($user['idWorld']); ?></td>
                                 <td>
                                     <div class="actions">
                                         <a href="index.php?page=admin_users&action=edit&id=<?php echo $user['idUser']; ?>" 
