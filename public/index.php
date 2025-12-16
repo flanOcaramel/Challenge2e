@@ -42,6 +42,22 @@ switch ($page) {
         $controller->adminDashboard();
         break;
 
+    case 'admin_users':
+        $controller->adminUsers();
+        break;
+
+    case 'admin_worlds':
+        $controller->adminWorlds();
+        break;
+
+    case 'admin_avatars':
+        $controller->adminAvatars();
+        break;
+
+    case 'logout':
+        $controller->logout();
+        break;
+
     case 'success':
         // Page de confirmation
         $controller->success();

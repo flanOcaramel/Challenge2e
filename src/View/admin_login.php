@@ -20,6 +20,7 @@
         <?php endif; ?>
 
         <form action="index.php?page=admin_auth" method="POST" class="login-form" style="display: flex; flex-direction: column; gap: 20px; align-items: center;">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
             <div class="input-wrapper">
                 <input type="text" name="username" placeholder="username" required class="glass-input shadow-input" autocomplete="off">
             </div>

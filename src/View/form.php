@@ -14,6 +14,7 @@
     <div class="main-layout-container">
 
         <form action="index.php?page=create_process" method="POST" id="profileForm" class="create-form-grid">
+            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
 
             <!-- COLOONE GAUCHE : INPUTS -->
             <div class="left-inputs">
@@ -82,7 +83,7 @@
             <button type="submit" style="opacity: 0; position: absolute; pointer-events: none;">Submit</button>
 
             <?php if (isset($error)): ?>
-                <div class="error-msg-overlay"><?php echo $error; ?></div>
+                <div class="error-msg-overlay"><?php echo htmlspecialchars($error); ?></div>
             <?php endif; ?>
 
         </form>
