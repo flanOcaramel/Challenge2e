@@ -60,7 +60,8 @@
 
                     <div class="card-body">
                         <div class="form-group">
-                            <input type="text" id="username" name="username" required="" placeholder=" " />
+                            <input type="text" id="username" name="username" required="" placeholder=" "
+                                value="<?= htmlspecialchars($data['username'] ?? '') ?>" />
                             <label for="username" class="form-label" data-text="USERNAME">USERNAME</label>
                         </div>
 
@@ -178,16 +179,26 @@
 
     <!-- ================= JS ================= -->
     <script>
-        /* ===== AVATARS ===== */
-        const avatars = [
-            { id: 1, name: "Adventurer", img: "assets/img/aventurier.jpg" },
-            { id: 2, name: "Mago Dog", img: "assets/img/chien_pug.jpg" },
-            { id: 3, name: "Mako Shark", img: "assets/img/requin_mako.jpg" },
-            { id: 4, name: "Fitness Man", img: "assets/img/fitness_man.jpg" },
-            { id: 5, name: "Astronaut", img: "assets/img/astronaute.jpg" }
-        ];
+        /* ===== AVATARS (DYNAMIC FROM PHP) ===== */
+        const avatars = <?php
+        $avatarsJS = array_map(function ($a) {
+            return [
+                'id' => $a['idAvatar'],
+                'name' => $a['nameAvatar'],
+                'img' => $a['imgAvatar']
+            ];
+        }, $avatars);
+        echo json_encode($avatarsJS);
+        ?>;
 
+        // Restore selection or default to 0
+        const savedAvatarId = <?= isset($data['idAvatar']) ? $data['idAvatar'] : 'null' ?>;
         let currentAvatar = 0;
+
+        if (savedAvatarId) {
+            const foundIndex = avatars.findIndex(a => a.id == savedAvatarId);
+            if (foundIndex !== -1) currentAvatar = foundIndex;
+        }
 
         const avatarImg = document.getElementById("avatarPreview");
         const avatarName = document.getElementById("avatarName");
@@ -232,14 +243,24 @@
             });
         });
 
-        // Initialize First World Selection
+        // Initialize World Selection (Saved or First)
+        const savedWorldId = <?= isset($data['idWorld']) ? $data['idWorld'] : 'null' ?>;
+
         if (allCards.length > 0) {
-            const firstCard = allCards[0];
-            const firstId = firstCard.getAttribute('data-id');
-            worldInput.value = firstId;
+            let targetCard = allCards[0];
+
+            // Should we restore a selection?
+            if (savedWorldId) {
+                const found = Array.from(allCards).find(c => c.getAttribute('data-id') == savedWorldId);
+                if (found) targetCard = found;
+            }
+
+            const targetId = targetCard.getAttribute('data-id');
+            worldInput.value = targetId;
+
             // Visual update
             allCards.forEach(c => {
-                if (c.getAttribute('data-id') === firstId) {
+                if (c.getAttribute('data-id') === targetId) {
                     c.querySelector('.selection-ring').classList.add('active');
                 }
             });
