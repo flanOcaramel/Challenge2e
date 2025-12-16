@@ -6,64 +6,64 @@ session_start();
 
 // Inclusion du contrôleur principal
 // Note : Le chemin relatif dépend de l'emplacement de 'public/index.php'
-require_once '../src/Controller/UserController.php';
+require_once "../src/Controller/UserController.php";
 
 // Instanciation du contrôleur
 $controller = new UserController();
 
 // Récupération de la page demandée dans l'URL (ex: index.php?page=create_avatar)
 // Si aucune page, on met 'home' par défaut.
-$page = $_GET['page'] ?? 'home';
+$page = $_GET["page"] ?? "home";
 
 // Routage simple (Switch Case)
 switch ($page) {
-    case 'create_avatar':
+    case "create_avatar":
         // Affiche le formulaire de création
         $controller->createAvatarForm();
         break;
 
-    case 'create_process':
+    case "create_process":
         // Traite la soumission du formulaire
         $controller->create();
         break;
-        
-    case 'admin_login':
+
+    case "admin_login":
         // Page de connexion admin (Formulaire)
         $controller->adminLogin();
         break;
 
-    case 'admin_auth':
+    case "admin_auth":
         // Traitement du formulaire de connexion
         $controller->processAdminLogin();
         break;
 
-    case 'admin_dashboard':
+    case "admin_dashboard":
         // Page de succès après connexion
         $controller->adminDashboard();
         break;
 
-    case 'admin_users':
+    case "admin_users":
         $controller->adminUsers();
         break;
 
-    case 'admin_worlds':
+    case "admin_worlds":
         $controller->adminWorlds();
         break;
 
-    case 'admin_avatars':
+    case "admin_avatars":
         $controller->adminAvatars();
         break;
 
-    case 'logout':
+    case "logout":
         $controller->logout();
         break;
 
-    case 'success':
+    case "success":
         // Page de confirmation
         $controller->success();
         break;
-        
-    case 'home':
+
+    case "home":
     default:
         // Landing Page par défaut
         $controller->home();

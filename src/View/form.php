@@ -23,7 +23,19 @@
 
 <body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white">
 
-    <main class="max-w-6xl mx-auto px-6 py-12">
+
+<main class="max-w-6xl mx-auto px-6 py-12">
+
+
+ <form action="index.php?page=create_process" method="POST"
+       class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+
+     <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+
+
+    <!-- ================= GAUCHE ================= -->
+    <section class="bg-white/10 backdrop-blur-xl border border-white/10
+                    rounded-3xl p-10 shadow-2xl flex flex-col gap-6">
 
 
         <form action="index.php?page=create_process" method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
