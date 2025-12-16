@@ -22,6 +22,17 @@ class UserController
         $this->userModel = new UserModel($this->db);
         $this->avatarModel = new AvatarModel($this->db);
         $this->worldModel = new WorldModel($this->db);
+
+        // Générer un token CSRF si nécessaire
+        if (!isset($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+    }
+
+    // Vérifier si un admin est connecté
+    public function isAdminLoggedIn()
+    {
+        return isset($_SESSION['admin']) && $_SESSION['admin'] === true;
     }
 
     // Affichage de la Landing Page (Accueil)
@@ -40,6 +51,11 @@ class UserController
     public function processAdminLogin()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Vérification CSRF
+            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                die('CSRF attack detected');
+            }
+
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
 
@@ -48,8 +64,8 @@ class UserController
 
             // Vérification simple (Hash) ET Rôle Admin
             if ($user && password_verify($password, $user['password']) && $user['userRole'] === 'ADMIN') {
-                // Succès : Redirection vers le dashboard
-                // Dans un vrai projet, on stockerait ici $_SESSION['admin'] = true;
+                // Succès : Stocker en session et redirection vers le dashboard
+                $_SESSION['admin'] = true;
                 header('Location: index.php?page=admin_dashboard');
                 exit();
             } else {
@@ -63,6 +79,11 @@ class UserController
     // Page Dashboard (Vide/Bienvenue)
     public function adminDashboard()
     {
+        if (!$this->isAdminLoggedIn()) {
+            header('Location: index.php?page=admin_login');
+            exit();
+        }
+        $userCount = $this->userModel->count();
         require_once '../src/View/admin_dashboard.php';
     }
 
@@ -118,6 +139,11 @@ class UserController
     public function create()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Vérification CSRF
+            if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+                die('CSRF attack detected');
+            }
+
             // Récupération des champs
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
@@ -158,5 +184,200 @@ class UserController
     public function success()
     {
         require_once '../src/View/success.php';
+    }
+
+    // Page admin utilisateurs
+    public function adminUsers()
+    {
+        if (!$this->isAdminLoggedIn()) {
+            header('Location: index.php?page=admin_login');
+            exit();
+        }
+
+        // Gérer les actions POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_GET['action'] ?? '';
+            if ($action === 'update') {
+                $id = $_POST['idUser'];
+                $username = $_POST['username'];
+                $userRole = $_POST['userRole'];
+                $idAvatar = $_POST['idAvatar'];
+                $idWorld = $_POST['idWorld'];
+                $password = $_POST['password'] ?? '';
+                if (!empty($password)) {
+                    $hashed = password_hash($password, PASSWORD_ARGON2ID);
+                    $this->userModel->updateWithPassword($id, $username, $userRole, $idAvatar, $idWorld, $hashed);
+                } else {
+                    $this->userModel->update($id, $username, $userRole, $idAvatar, $idWorld);
+                }
+                $_SESSION['success'] = 'Utilisateur mis à jour';
+                header('Location: index.php?page=admin_users');
+                exit();
+            } elseif ($action === 'delete') {
+                $this->userModel->delete($_POST['idUser']);
+                $_SESSION['success'] = 'Utilisateur supprimé';
+                header('Location: index.php?page=admin_users');
+                exit();
+            }
+        }
+
+        // Données pour la vue
+        $users = $this->userModel->findAll();
+        $avatars = $this->avatarModel->findAll();
+        $worlds = $this->worldModel->findAll();
+        if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
+            $user = $this->userModel->findById($_GET['id']);
+        }
+
+        require_once '../src/View/admin_users.php';
+    }
+
+    // Page admin mondes
+    public function adminWorlds()
+    {
+        if (!$this->isAdminLoggedIn()) {
+            header('Location: index.php?page=admin_login');
+            exit();
+        }
+
+        // Gérer les actions POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_GET['action'] ?? '';
+            if ($action === 'create') {
+                $nameWorld = $_POST['nameWorld'];
+                $imgWorld = $_POST['imgWorld'];
+                $urlWorld = $_POST['urlWorld'];
+                if ($this->worldModel->create($nameWorld, $imgWorld, $urlWorld)) {
+                    $_SESSION['success'] = 'Monde ajouté';
+                } else {
+                    $_SESSION['error'] = 'Erreur lors de l\'ajout';
+                }
+                header('Location: index.php?page=admin_worlds');
+                exit();
+            } elseif ($action === 'update') {
+                $id = $_POST['idWorld'];
+                $nameWorld = $_POST['nameWorld'];
+                $imgWorld = $_POST['imgWorld'];
+                $urlWorld = $_POST['urlWorld'];
+                if ($this->worldModel->update($id, $nameWorld, $imgWorld, $urlWorld)) {
+                    $_SESSION['success'] = 'Monde mis à jour';
+                } else {
+                    $_SESSION['error'] = 'Erreur lors de la mise à jour';
+                }
+                header('Location: index.php?page=admin_worlds');
+                exit();
+            } elseif ($action === 'delete') {
+                if ($this->worldModel->delete($_POST['idWorld'])) {
+                    $_SESSION['success'] = 'Monde supprimé';
+                } else {
+                    $_SESSION['error'] = 'Erreur lors de la suppression';
+                }
+                header('Location: index.php?page=admin_worlds');
+                exit();
+            }
+        }
+
+        // Données pour la vue
+        $worlds = $this->worldModel->findAll();
+        // Mapping des images
+        foreach ($worlds as &$world) {
+            $filename = 'world' . $world['idWorld'] . '.png';
+            $world['imgWorld'] = 'assets/img/' . $filename;
+        }
+        unset($world);
+
+        if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
+            $world = $this->worldModel->findById($_GET['id']);
+            // Mapping pour edit
+            $filename = 'world' . $world['idWorld'] . '.png';
+            $world['imgWorld'] = 'assets/img/' . $filename;
+        }
+
+        require_once '../src/View/admin_worlds.php';
+    }
+
+    // Page admin avatars
+    public function adminAvatars()
+    {
+        if (!$this->isAdminLoggedIn()) {
+            header('Location: index.php?page=admin_login');
+            exit();
+        }
+
+        // Gérer les actions POST
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $action = $_GET['action'] ?? '';
+            if ($action === 'create') {
+                $nameAvatar = $_POST['nameAvatar'];
+                $imgAvatar = $_POST['imgAvatar'];
+                if ($this->avatarModel->create($nameAvatar, $imgAvatar)) {
+                    $_SESSION['success'] = 'Avatar ajouté';
+                } else {
+                    $_SESSION['error'] = 'Erreur lors de l\'ajout';
+                }
+                header('Location: index.php?page=admin_avatars');
+                exit();
+            } elseif ($action === 'update') {
+                $id = $_POST['idAvatar'];
+                $nameAvatar = $_POST['nameAvatar'];
+                $imgAvatar = $_POST['imgAvatar'];
+                if ($this->avatarModel->update($id, $nameAvatar, $imgAvatar)) {
+                    $_SESSION['success'] = 'Avatar mis à jour';
+                } else {
+                    $_SESSION['error'] = 'Erreur lors de la mise à jour';
+                }
+                header('Location: index.php?page=admin_avatars');
+                exit();
+            } elseif ($action === 'delete') {
+                if ($this->avatarModel->delete($_POST['idAvatar'])) {
+                    $_SESSION['success'] = 'Avatar supprimé';
+                } else {
+                    $_SESSION['error'] = 'Erreur lors de la suppression';
+                }
+                header('Location: index.php?page=admin_avatars');
+                exit();
+            }
+        }
+
+        // Données pour la vue
+        $avatars = $this->avatarModel->findAll();
+        // Mapping des images
+        $avatarMap = [
+            1 => 'aventurier.jpg',
+            2 => 'astronaute.jpg',
+            3 => 'fitness_man.jpg',
+            4 => 'requin_mako.jpg',
+            5 => 'chien_pug.jpg'
+        ];
+        foreach ($avatars as &$avatar) {
+            $id = $avatar['idAvatar'];
+            if (isset($avatarMap[$id])) {
+                $avatar['imgAvatar'] = 'assets/img/' . $avatarMap[$id];
+            } else {
+                $avatar['imgAvatar'] = 'assets/img/aventurier.jpg'; // fallback
+            }
+        }
+        unset($avatar);
+
+        if (isset($_GET['action']) && $_GET['action'] === 'edit' && isset($_GET['id'])) {
+            $avatar = $this->avatarModel->findById($_GET['id']);
+            // Mapping pour edit
+            $id = $avatar['idAvatar'];
+            if (isset($avatarMap[$id])) {
+                $avatar['imgAvatar'] = 'assets/img/' . $avatarMap[$id];
+            } else {
+                $avatar['imgAvatar'] = 'assets/img/aventurier.jpg';
+            }
+        }
+
+        require_once '../src/View/admin_avatars.php';
+    }
+
+    // Logout
+    public function logout()
+    {
+        session_destroy();
+        header('Location: index.php?page=home');
+        exit();
     }
 }

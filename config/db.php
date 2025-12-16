@@ -4,9 +4,9 @@
 
 class Database {
     private $host = "127.0.0.1";
-    private $db_name = "challenge2";
-    private $username = "root";
-    private $password = "";
+    private $db_name = "chopin_vr";
+    private $username = "ProjetChallenge2";
+    private $password = "wm7qz)grblZDvARI";
     public $conn;
 
     // Méthode pour obtenir la connexion à la base de données
