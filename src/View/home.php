@@ -2,18 +2,39 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <title><?= $title ?? 'Chopin VR' ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Chopin VR</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<body class="home-body">
 
-    <div class="center-content">
-        <a href="index.php?page=create_avatar" class="big-button">
-            Créer un Avatar
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white">
+    <!-- Contenu principal -->
+    <main class="flex items-center justify-center min-h-screen">
+        <a href="index.php?page=create_avatar"
+           class="group relative inline-flex items-center justify-center
+                  px-12 py-6 text-2xl font-semibold
+                  rounded-2xl
+                  bg-indigo-600 hover:bg-indigo-500
+                  transition-all duration-300
+                  shadow-lg hover:shadow-indigo-500/40">
+
+            <span class="relative z-10">Créer un Avatar</span>
+
+            <!-- Effet glow -->
+            <span class="absolute inset-0 rounded-2xl bg-indigo-500 opacity-0
+                         group-hover:opacity-20 transition"></span>
         </a>
-    </div>
+    </main>
 
     <div class="center-content" style="margin-top: 1cm;">
         <button id="how-to-play-btn" class="big-button" style="width: auto; display: inline-block;">
@@ -72,3 +93,4 @@
 
 </body>
 </html>
+
