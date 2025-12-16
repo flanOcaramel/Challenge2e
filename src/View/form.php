@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,13 @@
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS (includes animation) -->
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { scrollbar-width: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
 
@@ -29,9 +32,6 @@
                 <?= htmlspecialchars($error) ?>
             </div>
         <?php endif; ?>
-
-
-        <h1 class="text-2xl font-semibold">Create your character</h1>
 
 
         <form action="index.php?page=create_process" method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -55,12 +55,8 @@
                             <span>AVATAR CREATION</span>
                         </div>
 
-
-        <input type="password" name="password" placeholder="Password" required
-               pattern="(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}"
-               title="8 caractères min, 1 majuscule, 1 chiffre, 1 spécial"
-               class="px-5 py-4 rounded-xl bg-slate-900/80 border border-slate-700
-                      focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <div class="card-dots"><span></span><span></span><span></span></div>
+                    </div>
 
                     <div class="card-body">
                         <div class="form-group">
@@ -69,47 +65,42 @@
                             <label for="username" class="form-label" data-text="USERNAME">USERNAME</label>
                         </div>
 
+                        <div class="form-group">
+                            <input type="password" id="password" name="password" required="" placeholder=" " />
+                            <label for="password" class="form-label" data-text="ACCESS_KEY">ACCESS_KEY</label>
+                        </div>
 
-    <!-- ================= AVATAR ================= -->
-    <section class="flex flex-col items-center gap-6">
-
-        <input type="hidden" name="idAvatar" id="idAvatarInput">
-
-        <div class="flex items-center gap-8">
-
-            <button type="button" id="prevBtn"
-                    class="w-12 h-12 rounded-full bg-slate-700 hover:bg-slate-600 text-xl">
-                ‹
-            </button>
-
-            <div class="w-64 h-80 rounded-2xl bg-gradient-to-b from-emerald-400/20 to-slate-900
-                        border border-white/10 shadow-xl flex items-center justify-center">
-                <img id="avatarPreview" src="" alt="Avatar"
-                     class="max-h-full object-contain">
+                        <button data-text="INITIATE_CONNECTION" type="submit" class="submit-btn">
+                            <span class="btn-text">INITIATE_CONNECTION</span>
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <button type="button" id="nextBtn"
-                    class="w-12 h-12 rounded-full bg-slate-700 hover:bg-slate-600 text-xl">
-                ›
-            </button>
-        </div>
+            <!-- ================= AVATAR (Adjusted vertical offset) ================= -->
+            <section class="flex flex-col items-center justify-center gap-6 lg:pt-12">
 
-        <div id="avatarName" class="text-lg font-semibold text-white/80">
-            Adventurer
-        </div>
-    </section>
+                <input type="hidden" name="idAvatar" id="idAvatarInput">
 
-    <!-- ================= MONDES ================= -->
-    <section class="lg:col-span-2 mt-14">
+                <div class="flex items-center gap-8">
 
-        <h2 class="text-xl font-semibold mb-8 text-center">
-            Choose your world
-        </h2>
+                    <button type="button" id="prevBtn"
+                        class="w-12 h-12 rounded-full bg-slate-700 hover:bg-slate-600 text-xl flex items-center justify-center transition hover:scale-110 shadow-lg border border-white/10">
+                        ‹
+                    </button>
 
-        <input type="hidden" name="idWorld" id="idWorldInput" required>
+                    <!-- Avatar Card Frame -->
+                    <!-- Updated Color: #e3e4e7 -->
+                    <div
+                        class="w-64 h-80 rounded-2xl bg-[#e3e4e7] shadow-xl flex items-center justify-center overflow-hidden border border-white/10 relative group">
+                        <!-- Inner glow/shadow for depth -->
+                        <div class="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.05)] pointer-events-none z-10">
+                        </div>
 
-        <div class="flex items-center justify-center gap-10">
-
+                        <!-- object-contain to prevent cropping -->
+                        <img id="avatarPreview" src="" alt="Avatar"
+                            class="w-full h-full object-contain transition transform group-hover:scale-105 duration-500">
+                    </div>
 
                     <button type="button" id="nextBtn"
                         class="w-12 h-12 rounded-full bg-slate-700 hover:bg-slate-600 text-xl flex items-center justify-center transition hover:scale-110 shadow-lg border border-white/10">
@@ -158,26 +149,27 @@
                             <?php endforeach; ?>
                         </div>
 
+                        <!-- Group 2 (Duplicate for loop) -->
+                        <div class="carousel-group" aria-hidden="true">
+                            <?php foreach ($worlds as $world): ?>
+                                <div class="world-card" data-id="<?= $world['idWorld'] ?>">
+                                    <!-- Image -->
+                                    <img src="<?= htmlspecialchars($world['imgWorld']) ?>" class="world-img">
 
-            <div id="worldCarousel"
-                 class="flex gap-8 overflow-x-auto scroll-smooth snap-x snap-mandatory
-                        max-w-[900px] px-2 scrollbar-hide">
+                                    <!-- Overlay Title -->
+                                    <div class="world-overlay">
+                                        <h3 class="world-title-text">
+                                            <?= htmlspecialchars($world['nameWorld']) ?>
+                                        </h3>
+                                    </div>
 
-                <?php foreach ($worlds as $world): ?>
-                    <div data-id="<?= $world['idWorld'] ?>"
-                         class="world-item snap-center shrink-0 w-64
-                                bg-white/10 backdrop-blur border border-white/10
-                                rounded-2xl overflow-hidden cursor-pointer
-                                transition hover:scale-105">
-
-                        <img src="<?= htmlspecialchars($world['imgWorld']) ?>"
-                             class="h-40 w-full object-cover">
-
-                        <div class="p-4 text-center font-semibold">
-                            <?= htmlspecialchars($world['nameWorld']) ?>
+                                    <!-- Selection Ring -->
+                                    <div class="selection-ring"></div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
-                    </div>
 
+                    </div>
                 </div>
 
 
@@ -223,52 +215,33 @@
             renderAvatar();
         };
 
+        document.getElementById("nextBtn").onclick = () => {
+            currentAvatar = (currentAvatar + 1) % avatars.length;
+            renderAvatar();
+        };
 
-            </div>
-
-            <button type="button" id="worldNext"
-                    class="w-12 h-12 rounded-full bg-slate-700 hover:bg-slate-600 text-xl">
-                ›
-            </button>
-        </div>
-    </section>
-
-</form>
-</main>
-
-<!-- ================= JS ================= -->
-<script>
-    /* ===== AVATARS ===== */
-    const avatars = [
-        { id: 1, name: "Adventurer", img: "assets/img/aventurier.jpg" },
-        { id: 2, name: "Mago Dog", img: "assets/img/chien_pug.jpg" },
-        { id: 3, name: "Mako Shark", img: "assets/img/requin_mako.jpg" },
-        { id: 4, name: "Fitness Man", img: "assets/img/fitness_man.jpg" },
-        { id: 5, name: "Astronaut", img: "assets/img/astronaute.jpg" }
-    ];
-
-    let currentAvatar = 0;
-
-    const avatarImg = document.getElementById("avatarPreview");
-    const avatarName = document.getElementById("avatarName");
-    const avatarInput = document.getElementById("idAvatarInput");
-
-    function renderAvatar() {
-        avatarImg.src = avatars[currentAvatar].img;
-        avatarName.textContent = avatars[currentAvatar].name;
-        avatarInput.value = avatars[currentAvatar].id;
-    }
-
-    document.getElementById("prevBtn").onclick = () => {
-        currentAvatar = (currentAvatar - 1 + avatars.length) % avatars.length;
         renderAvatar();
-    };
 
-    document.getElementById("nextBtn").onclick = () => {
-        currentAvatar = (currentAvatar + 1) % avatars.length;
-        renderAvatar();
-    };
+        /* ===== MONDES (SELECTION LOGIC) ===== */
+        const worldInput = document.getElementById("idWorldInput");
+        const allCards = document.querySelectorAll('.world-card');
 
+        allCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                worldInput.value = id;
+
+                // Update visual selection for ALL cards with this ID (in both groups)
+                allCards.forEach(c => {
+                    const ring = c.querySelector('.selection-ring');
+                    if (c.getAttribute('data-id') === id) {
+                        ring.classList.add('active');
+                    } else {
+                        ring.classList.remove('active');
+                    }
+                });
+            });
+        });
 
         // Initialize World Selection (Saved or First)
         const savedWorldId = <?= isset($data['idWorld']) ? $data['idWorld'] : 'null' ?>;
@@ -337,53 +310,63 @@
             if (!isDown) playAnimations();
         });
 
-
-    /* ===== MONDES ===== */
-    const carousel = document.getElementById("worldCarousel");
-    const worldItems = document.querySelectorAll(".world-item");
-    const worldInput = document.getElementById("idWorldInput");
-    let currentWorld = 0;
-
-    function renderWorld() {
-        // Scroll vers l'élément courant
-        worldItems[currentWorld].scrollIntoView({ behavior: 'smooth', inline: 'center' });
-
-        // Mise en surbrillance
-        worldItems.forEach((el, idx) => {
-            el.classList.toggle("ring-2", idx === currentWorld);
-            el.classList.toggle("ring-indigo-500", idx === currentWorld);
-            el.classList.toggle("scale-110", idx === currentWorld);
+        // Drag Interaction
+        carouselContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX;
+            lastX = startX;
+            carouselContainer.style.cursor = 'grabbing';
+            pauseAnimations();
         });
 
-        worldInput.value = worldItems[currentWorld].dataset.id;
-    }
+        carouselContainer.addEventListener('mouseup', () => {
+            if (isDown) {
+                isDown = false;
+                carouselContainer.style.cursor = 'grab';
+                playAnimations();
+            }
+        });
 
-    document.getElementById("worldPrev").onclick = () => {
-        currentWorld = (currentWorld - 1 + worldItems.length) % worldItems.length;
-        renderWorld();
-    };
+        // Safety if mouse leaves window
+        window.addEventListener('mouseup', () => {
+            if (isDown) {
+                isDown = false;
+                carouselContainer.style.cursor = 'grab';
+                playAnimations();
+            }
+        });
 
-    document.getElementById("worldNext").onclick = () => {
-        currentWorld = (currentWorld + 1) % worldItems.length;
-        renderWorld();
-    };
+        carouselContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
 
-    worldItems.forEach((item, idx) => {
-        item.onclick = () => {
-            currentWorld = idx;
-            renderWorld();
-        };
-    });
+            const currentX = e.pageX;
+            const deltaX = currentX - lastX; // Pixel change since last frame
+            lastX = currentX;
 
-    renderWorld();
-</script>
+            scrubAnimations(deltaX);
+        });
 
-<?php if (isset($_SESSION['error'])): ?>
-<script>
-alert("<?php echo $_SESSION['error']; ?>");
-</script>
-<?php unset($_SESSION['error']); ?>
-<?php endif; ?>
+        // Touch support
+        carouselContainer.addEventListener('touchstart', (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX;
+            lastX = startX;
+            pauseAnimations();
+        });
+        carouselContainer.addEventListener('touchend', () => {
+            isDown = false;
+            playAnimations();
+        });
+        carouselContainer.addEventListener('touchmove', (e) => {
+            if (!isDown) return;
+            const currentX = e.touches[0].pageX;
+            const deltaX = currentX - lastX;
+            lastX = currentX;
+            scrubAnimations(deltaX);
+        });
+    </script>
 
 </body>
+
 </html>

@@ -26,14 +26,10 @@ class UserModel {
         $stmt->bindParam(":idAvatar", $idAvatar);
         $stmt->bindParam(":idWorld", $idWorld);
 
-        try {
-            if($stmt->execute()) {
-                return true;
-            }
-            return false;
-        } catch (PDOException $e) {
-            return false;
+        if($stmt->execute()) {
+            return true;
         }
+        return false;
     }
     // Trouver un utilisateur par son pseudo
     public function findByUsername($username) {
