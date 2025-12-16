@@ -151,13 +151,17 @@ class UserController
             $idWorld = $_POST['idWorld'] ?? null;
 
             // Validation basique
-            if (!empty($username) && !empty($password) && !empty($idAvatar) && !empty($idWorld)) {
+            if (empty($username) || empty($password) || empty($idAvatar) || empty($idWorld)) {
+                $_SESSION['error'] = "Veuillez remplir tous les champs.";
+                header("Location: index.php?page=create_avatar");
+                exit();
+            }
 
                 // Validation du mot de passe (8 chars, 1 maj, 1 chiffre, 1 spécial)
                 if (!preg_match('/^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/', $password)) {
-                    $error = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.";
-                    $this->createAvatarForm(); // Recharge avec erreur
-                    return; // Arrêt du script
+                    $_SESSION['error'] = "Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.";
+                    header("Location: index.php?page=create_avatar");
+                    exit();
                 }
 
                 // Hachage du mot de passe pour la sécurité (conformément aux contraintes)
@@ -169,14 +173,10 @@ class UserController
                     header("Location: index.php?page=success");
                     exit();
                 } else {
-                    $error = "Erreur lors de l'enregistrement. Ce nom d'utilisateur est peut-être déjà pris.";
-                    // On recharge le formulaire avec l'erreur
-                    $this->createAvatarForm();
+                    $_SESSION['error'] = "Ce nom d'utilisateur est déjà pris.";
+                    header("Location: index.php?page=create_avatar");
+                    exit();
                 }
-            } else {
-                $error = "Veuillez remplir tous les champs.";
-                $this->createAvatarForm(); // Recharge le formulaire si incomplet
-            }
         }
     }
 
