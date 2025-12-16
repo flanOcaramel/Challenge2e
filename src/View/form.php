@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,11 +11,13 @@
 
     <!-- Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS (includes animation) -->
+    <link rel="stylesheet" href="assets/css/style.css">
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { scrollbar-width: none; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
 
@@ -23,15 +26,32 @@
 <main class="max-w-6xl mx-auto px-6 py-12">
 
 
+<<<<<<< HEAD
  <form action="index.php?page=create_process" method="POST"
        class="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
      <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
+=======
+        <form action="index.php?page=create_process" method="POST" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+>>>>>>> origin/kamdine
 
 
-    <!-- ================= GAUCHE ================= -->
-    <section class="bg-white/10 backdrop-blur-xl border border-white/10
-                    rounded-3xl p-10 shadow-2xl flex flex-col gap-6">
+            <!-- ================= GAUCHE (GLITCH FORM) ================= -->
+            <div class="glitch-form-wrapper">
+                <div class="glitch-card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                <path d="M12 11.5a3 3 0 0 0 -3 2.824v1.176a3 3 0 0 0 6 0v-1.176a3 3 0 0 0 -3 -2.824z">
+                                </path>
+                            </svg>
+                            <span>AVATAR CREATION</span>
+                        </div>
 
         <h1 class="text-2xl font-semibold">Create your character</h1>
 
@@ -115,98 +135,170 @@
                             <?= htmlspecialchars($world['nameWorld']) ?>
                         </div>
                     </div>
-                <?php endforeach; ?>
+                </div>
 
-            </div>
+            </section>
 
-            <button type="button" id="worldNext"
-                    class="w-12 h-12 rounded-full bg-slate-700 hover:bg-slate-600 text-xl">
-                ›
-            </button>
-        </div>
-    </section>
+        </form>
+    </main>
 
-</form>
-</main>
+    <!-- ================= JS ================= -->
+    <script>
+        /* ===== AVATARS ===== */
+        const avatars = [
+            { id: 1, name: "Adventurer", img: "assets/img/aventurier.jpg" },
+            { id: 2, name: "Mago Dog", img: "assets/img/chien_pug.jpg" },
+            { id: 3, name: "Mako Shark", img: "assets/img/requin_mako.jpg" },
+            { id: 4, name: "Fitness Man", img: "assets/img/fitness_man.jpg" },
+            { id: 5, name: "Astronaut", img: "assets/img/astronaute.jpg" }
+        ];
 
-<!-- ================= JS ================= -->
-<script>
-    /* ===== AVATARS ===== */
-    const avatars = [
-    { id: 1, name: "Adventurer", img: "assets/img/aventurier.jpg" },
-    { id: 2, name: "chien_mako",    img: "assets/img/chien_pug.jpg" },
-    { id: 3, name: "requin_mako",       img: "assets/img/requin_mako.jpg" },
-    { id: 4, name: "fitness_man",      img: "assets/img/fitness_man.jpg" },
-    { id: 5, name: "astraunote",      img: "assets/img/astronaute.jpg" }
-];
+        let currentAvatar = 0;
 
-    let currentAvatar = 0;
+        const avatarImg = document.getElementById("avatarPreview");
+        const avatarName = document.getElementById("avatarName");
+        const avatarInput = document.getElementById("idAvatarInput");
 
-    const avatarImg   = document.getElementById("avatarPreview");
-    const avatarName  = document.getElementById("avatarName");
-    const avatarInput = document.getElementById("idAvatarInput");
+        function renderAvatar() {
+            avatarImg.src = avatars[currentAvatar].img;
+            avatarName.textContent = avatars[currentAvatar].name;
+            avatarInput.value = avatars[currentAvatar].id;
+        }
 
-    function renderAvatar() {
-        avatarImg.src = avatars[currentAvatar].img;
-        avatarName.textContent = avatars[currentAvatar].name;
-        avatarInput.value = avatars[currentAvatar].id;
-    }
+        document.getElementById("prevBtn").onclick = () => {
+            currentAvatar = (currentAvatar - 1 + avatars.length) % avatars.length;
+            renderAvatar();
+        };
 
-    document.getElementById("prevBtn").onclick = () => {
-        currentAvatar = (currentAvatar - 1 + avatars.length) % avatars.length;
+        document.getElementById("nextBtn").onclick = () => {
+            currentAvatar = (currentAvatar + 1) % avatars.length;
+            renderAvatar();
+        };
+
         renderAvatar();
-    };
 
-    document.getElementById("nextBtn").onclick = () => {
-        currentAvatar = (currentAvatar + 1) % avatars.length;
-        renderAvatar();
-    };
+        /* ===== MONDES (SELECTION LOGIC) ===== */
+        const worldInput = document.getElementById("idWorldInput");
+        const allCards = document.querySelectorAll('.world-card');
 
-    renderAvatar();
+        allCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                worldInput.value = id;
 
-    /* ===== MONDES ===== */
-    /* ===== MONDES ===== */
-    const carousel = document.getElementById("worldCarousel");
-    const worldItems = document.querySelectorAll(".world-item");
-    const worldInput = document.getElementById("idWorldInput");
-    let currentWorld = 0;
-
-    function renderWorld() {
-        // Scroll vers l'élément courant
-        worldItems[currentWorld].scrollIntoView({ behavior: 'smooth', inline: 'center' });
-
-        // Mise en surbrillance
-        worldItems.forEach((el, idx) => {
-            el.classList.toggle("ring-2", idx === currentWorld);
-            el.classList.toggle("ring-indigo-500", idx === currentWorld);
-            el.classList.toggle("scale-110", idx === currentWorld);
+                // Update visual selection for ALL cards with this ID (in both groups)
+                allCards.forEach(c => {
+                    const ring = c.querySelector('.selection-ring');
+                    if (c.getAttribute('data-id') === id) {
+                        ring.classList.add('active');
+                    } else {
+                        ring.classList.remove('active');
+                    }
+                });
+            });
         });
 
-        worldInput.value = worldItems[currentWorld].dataset.id;
-    }
+        /* ===== DRAG TO SLIDE (SCRUBBING) ===== */
+        const carouselContainer = document.querySelector('.infinite-carousel');
+        const carouselGroups = document.querySelectorAll('.carousel-group');
 
-    document.getElementById("worldPrev").onclick = () => {
-        currentWorld = (currentWorld - 1 + worldItems.length) % worldItems.length;
-        renderWorld();
-    };
+        let isDown = false;
+        let startX;
+        let lastX;
 
-    document.getElementById("worldNext").onclick = () => {
-        currentWorld = (currentWorld + 1) % worldItems.length;
-        renderWorld();
-    };
+        // Helper to control animation
+        function pauseAnimations() {
+            carouselGroups.forEach(group => {
+                group.getAnimations().forEach(anim => anim.pause());
+            });
+        }
 
-  
-    renderWorld();
+        function playAnimations() {
+            carouselGroups.forEach(group => {
+                group.getAnimations().forEach(anim => anim.play());
+            });
+        }
 
-    worldItems.forEach((item, idx) => {
-        item.onclick = () => {
-            currentWorld = idx;
-            renderWorld();
-        };
-    });
-</script>
+        function scrubAnimations(deltaX) {
+            carouselGroups.forEach(group => {
+                group.getAnimations().forEach(anim => {
+                    // Sensitivity: 15ms per pixel
+                    let newTime = anim.currentTime - (deltaX * 15);
+
+                    // NORMALIZE TIME to [0, 20000]
+                    const duration = 20000;
+                    newTime = (newTime % duration + duration) % duration;
+
+                    anim.currentTime = newTime;
+                });
+            });
+        }
+
+        // Hover Effects
+        carouselContainer.addEventListener('mouseenter', () => {
+            if (!isDown) pauseAnimations();
+        });
+        carouselContainer.addEventListener('mouseleave', () => {
+            if (!isDown) playAnimations();
+        });
+
+        // Drag Interaction
+        carouselContainer.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX;
+            lastX = startX;
+            carouselContainer.style.cursor = 'grabbing';
+            pauseAnimations();
+        });
+
+        carouselContainer.addEventListener('mouseup', () => {
+            if (isDown) {
+                isDown = false;
+                carouselContainer.style.cursor = 'grab';
+                playAnimations();
+            }
+        });
+
+        // Safety if mouse leaves window
+        window.addEventListener('mouseup', () => {
+            if (isDown) {
+                isDown = false;
+                carouselContainer.style.cursor = 'grab';
+                playAnimations();
+            }
+        });
+
+        carouselContainer.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+
+            const currentX = e.pageX;
+            const deltaX = currentX - lastX; // Pixel change since last frame
+            lastX = currentX;
+
+            scrubAnimations(deltaX);
+        });
+
+        // Touch support
+        carouselContainer.addEventListener('touchstart', (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX;
+            lastX = startX;
+            pauseAnimations();
+        });
+        carouselContainer.addEventListener('touchend', () => {
+            isDown = false;
+            playAnimations();
+        });
+        carouselContainer.addEventListener('touchmove', (e) => {
+            if (!isDown) return;
+            const currentX = e.touches[0].pageX;
+            const deltaX = currentX - lastX;
+            lastX = currentX;
+            scrubAnimations(deltaX);
+        });
+    </script>
 
 </body>
+
 </html>
-
-
