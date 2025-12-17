@@ -380,6 +380,61 @@ class UserController
         require_once '../src/View/admin_avatars.php';
     }
 
+    // API Login for VR app
+    public function apiLogin()
+    {
+        header('Content-Type: application/json');
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $username = $_POST['username'] ?? '';
+            $password = $_POST['password'] ?? '';
+
+            $user = $this->userModel->findByUsername($username);
+            if ($user && password_verify($password, $user['password'])) {
+                if ($user['idWorld'] == 1) { // Only allow if world is La prairie pluvieuse
+                    $avatar = $this->avatarModel->findById($user['idAvatar']);
+                    // Map model names to VR assets
+                    $modelMap = [
+                        'adventurer.glb' => 'aventurier.glb',
+                        'astronaut.glb' => 'astronaute.glb',
+                        'fitness.glb' => 'fitness.glb',
+                        'mako.glb' => 'shark.glb',
+                        'pug.glb' => 'pug.glb'
+                    ];
+                    $vrModel = $modelMap[$avatar['modelAvatar']] ?? $avatar['modelAvatar'];
+                    echo json_encode([
+                        'success' => true,
+                        'avatar' => [
+                            'model' => $vrModel,
+                            'name' => $avatar['nameAvatar']
+                        ]
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Access denied: Only users with world "La prairie pluvieuse" can access VR.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid credentials.']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Method not allowed.']);
+        }
+        exit();
+    }
+
+    // API Get non-admin usernames
+    public function apiGetUsernames()
+    {
+        header('Content-Type: application/json');
+        $users = $this->userModel->findAll();
+        $usernames = [];
+        foreach ($users as $user) {
+            if ($user['userRole'] !== 'ADMIN') {
+                $usernames[] = $user['username'];
+            }
+        }
+        echo json_encode($usernames);
+        exit();
+    }
+
     // Logout
     public function logout()
     {

@@ -58,6 +58,14 @@ switch ($page) {
         $controller->logout();
         break;
 
+    case "api_login":
+        $controller->apiLogin();
+        break;
+
+    case "api_usernames":
+        $controller->apiGetUsernames();
+        break;
+
     case "success":
         // Page de confirmation
         $controller->success();
