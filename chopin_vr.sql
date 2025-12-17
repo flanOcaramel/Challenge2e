@@ -32,7 +32,7 @@ CREATE TABLE `avatar` (
   `nameAvatar` varchar(100) NOT NULL,
   `modelAvatar` varchar(255) NOT NULL,
   `imgAvatar` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `avatar`
@@ -58,7 +58,7 @@ CREATE TABLE `user` (
   `userRole` enum('ADMIN','JOUEUR') DEFAULT 'JOUEUR',
   `idAvatar` int NOT NULL,
   `idWorld` int NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `user`
@@ -78,7 +78,7 @@ CREATE TABLE `world` (
   `nameWorld` varchar(100) NOT NULL,
   `imgWorld` varchar(255) DEFAULT NULL,
   `urlWorld` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `world`
