@@ -248,7 +248,7 @@
         function renderAvatar() {
             // Update Model Source
             // Assuming models are in 'assets/3d/' based on user findings
-            avatarModel.src = "assets/3d/" + avatars[currentAvatar].model; 
+            let path1 = "assets/3d/avatars/" + avatars[currentAvatar].model; let path2 = "assets/3d/" + avatars[currentAvatar].model; avatarModel.src = path1; avatarModel.onerror = function() { avatarModel.src = path2; };
             
             // If the model has an image fallback (Poster), we can set it here if needed
             // avatarModel.poster = avatars[currentAvatar].img;
