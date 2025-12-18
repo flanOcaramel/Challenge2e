@@ -6,8 +6,9 @@ class Database
 {
     private $host = "127.0.0.1";
     private $db_name = "zymsfdnmse_chopin_vr";
-    private $username = "zymsfdnmse_Challenge2";
-    private $password = "wm7qz)grblZDvARI";
+    // Use local XAMPP defaults: user 'root' with empty password (or adapt if you set one)
+    private $username = "root";
+    private $password = "";
     public $conn;
 
     // Méthode pour obtenir la connexion à la base de données
